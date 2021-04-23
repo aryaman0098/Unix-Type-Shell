@@ -165,16 +165,18 @@ void getShellName(){
 void printHelp(){
     printf("\n");
     printf("\t\t************************Brief Instructions************************\n\n");
-    printf("   1. Run the command \'HISTN\' to view the last N commands executed on this shell\n");
-    printf("   2. Run the command \'!HISTN\' to execute the Nth command executed on this shell\n");
-    printf("   3. Run the commnad \'pid\' to get the process id of this shell\n");
-    printf("   4. Run the commnad \'pid all\' to get the process ids of all the processes spawned from this shell\n");
-    printf("   5. Run the commnad \'pid current\' to get the process ids of all the processes spawned from this shell and currently active\n");
-    printf("   6. Run the commnad \'HELP\' to get the instructions for this shell\n\n");
+    printf("   1. Run the command\033[1;33m HISTN\033[0;35m to view the last N commands executed on this shell\n");
+    printf("   2. Run the command\033[1;33m !HISTN\033[0;35m to execute the Nth command executed on this shell\n");
+    printf("   3. Run the commnad\033[1;33m pid\033[0;35m to get the process id of this shell\n");
+    printf("   4. Run the commnad\033[1;33m pid all\033[0;35m to get the process ids of all the processes spawned from this shell\n");
+    printf("   5. Run the commnad\033[1;33m pid current\033[0;35m to get the process ids of all the processes spawned from this shell and currently active\n");
+    printf("   6. Run the commnad\033[1;33m HELP\033[0;35m to get the instructions for this shell\n\n");
     printf("\t\t*******************************************************************\n\n");
     return;
 }
 
+
+//Adding colours
 void red (){
   printf("\033[1;31m");
 }
