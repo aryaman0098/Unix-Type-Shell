@@ -13,6 +13,11 @@
 //Driver function
 int main(){
 
+    //Instructions on how to use this shell
+    purple();
+    printHelp();
+    reset();
+
     printf("\n");
     getShellName(); //Getting the name of the shell
 
@@ -29,8 +34,15 @@ int main(){
     //Starting the shells
     while(1){
         strcpy(dir, "");
-        printf("%s%s> ", shellName, getcwd(dir, maxLength)); //Shell prompt
         
+        yellow();
+        bold();
+        printf("%s", shellName); //Shell prompt
+        cyan();
+        bold();
+        printf("%s-> ", getcwd(dir, maxLength)); //Shell prompt
+        reset();
+
         //Getting the input command
         if(getline(&command, &len, stdin) == -1){
             printf("\n");
@@ -63,7 +75,17 @@ int main(){
             if(isNumber(command + 4) == 1){
                 printHistory(histHead, atoi(command + 4));
             }else{
-                printf("[!!]Error while executing command. To print the latest \'N\' commands, run the command \'HISTN\'\n");
+                red();
+                printf("[!!]Error while executing command. To print the last ");
+                yellow();
+                printf("\'N\' ");
+                red();
+                printf(", commands run ");
+                yellow();
+                printf("\'!HISTN\'\n");
+                red();
+                printf(" (where N is the number commands)");
+                reset();
             }
         }
         //Executing the Nth command using !HISTN command
@@ -71,17 +93,37 @@ int main(){
             if(isNumber(command+5) == 1 && numWords(command) == 1){
                 execCommandN(histHead, atoi(command + 5));
             }else{
-                printf("[!!]Error while executing command. To execute command number \'N\' , run the command \'!HISTN\'\n");
+                red();
+                printf("[!!]Error while executing command. To execute the ");
+                yellow();
+                printf("\'Nth\' ");
+                red();
+                printf(", command, run ");
+                yellow();
+                printf("\'!HISTN\'");
+                red();
+                printf(" (where N is the command number)\n");
+                reset();
             }
         }
         //Command to print the pid of the current shell
         else if(strcmp(command, "pid") == 0){
-            printf("\nCommand name : %-30s process id : %-5d\n", "./shell", getpid());
+            purple();
+            printf("\nProcess name : ");
+            yellow();
+            printf("%-30s", "./shell");
+            purple();
+            printf("process id : ");
+            yellow();
+            printf("%-5d\n", getpid());
+            reset();
         }
         //Command to print the pid of all the spawned processes from the shell
         else if((strstr(command, "pid") != NULL) && (strstr(command, "all") != NULL) && (numWords(command) == 2)){
             if(histHead == NULL){
+                purple();
                 printf("\n*No process spawned from this shell so far*\n");
+                reset();
             }
             else{
                 printPidAll(histHead);
@@ -90,7 +132,9 @@ int main(){
         //Command to print all the active processes spanwed from the shell
         else if((strstr(command, "pid") != NULL) && (strstr(command, "current") != NULL) && (numWords(command) == 2)){
             if(currProc == NULL){
+                purple();
                 printf("\n*No process currently active*\n");
+                reset();
             }
             else{
                 printPidAll(currProc);
@@ -99,12 +143,16 @@ int main(){
         //Command to exit the shell
         else if(strcmp(command, "STOP") == 0){
             killBackgroundProcesses(&currProc); //Killing background processes, if any
-            printf("\n*Exiting from this shell, bye*\n");
+            purple();
+            printf("\n*Exiting from this shell, bye*\n\n");
+            reset();
             free(command);
             break;
         }
         else if(strcmp(command, "HELP") == 0){
+            purple();
             printHelp();
+            reset();
         }
         //Execution of normal command (background and foreground)
         else{

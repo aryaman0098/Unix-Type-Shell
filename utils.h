@@ -17,6 +17,12 @@ int isNumber(char* str);
 int numWords(char* str);
 void getShellName();
 void printHelp();
+void red ();
+void yellow();
+void cyan();
+void purple();
+void bold();
+void reset ();
 
 
 #endif

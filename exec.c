@@ -25,23 +25,26 @@ void sigHandler(int sig){
                 char* pid = (char*)calloc(20, sizeof(char));
 
                 sprintf(pid, "%d", p);
-                strcpy(msg, "\n\nProcess with process id: [");
+                strcpy(msg, "\n\033[0;35mProcess with process id: \033[1;33m[");
                 strcat(msg, pid);
-                strcat(msg, "] exited with status: ");
+                strcat(msg, "]\033[0;35m exited with status: ");
                         
                 int exitStatus = WEXITSTATUS(status);
                 sprintf(es, "%d", exitStatus);
                 strcat(msg, es);
+                strcat(msg, "\n");
+                strcat(msg, "\033[0m");
 
                 deleteNode(&currProc, p);
 
-                strcat(msg, "\n");
+                strcat(msg, "\n\033[1;33m\033[1m");
                 strcat(msg, shellName);
-                strcat(msg, "~");
+                strcat(msg, "\033[0;36m\033[1m");
                 strcat(msg, getcwd(dir, maxLength));
-                strcat(msg, "> ");
+                strcat(msg, "-> ");
+                strcat(msg, "\033[0m");
                 write(STDOUT_FILENO, msg, strlen(msg));
-                
+                        
                 free(msg);
                 free(dir);
                 free(es);
@@ -49,17 +52,19 @@ void sigHandler(int sig){
             }
         }
     //Handling ctrl - C
-    }else if(sig == SIGINT){
-        char* msg = (char*)calloc(maxLength, sizeof(char));
-        char* dir = (char*)calloc(maxLength, sizeof(char));
-        strcat(msg, "\n");
-        strcat(msg, shellName);
-        strcat(msg, getcwd(dir, maxLength));
-        strcat(msg, "> ");
-        write(STDOUT_FILENO, msg, strlen(msg));
-        free(msg);
-        free(dir);
-    }    
+        }else if(sig == SIGINT){
+            char* msg = (char*)calloc(maxLength, sizeof(char));
+            char* dir = (char*)calloc(maxLength, sizeof(char));
+            strcat(msg, "\n\033[1;33m\033[1m");
+            strcat(msg, shellName);
+            strcat(msg, "\033[0;36m\033[1m");
+            strcat(msg, getcwd(dir, maxLength));
+            strcat(msg, "-> ");
+            strcat(msg, "\033[0m");
+            write(STDOUT_FILENO, msg, strlen(msg));
+            free(msg);
+            free(dir);
+        }    
     return;
 }
 
@@ -86,13 +91,19 @@ void execCommand(char** args, int background){
         push(&histHead, command, p);
         
         if(p == -1){
+            red();
             printf("\n[!!] An error occurred while executing the command\n");
+            reset();
             return;
         }
         if(p == 0){
             printf("\n");
             execvp(args[0], args);
-            printf("[!!] An error occurred while executing %s\n", command);
+            red();
+            printf("[!!] An error occurred while executing ");
+            yellow();
+            printf("%s\n", command);
+            reset();
             _exit(0);
         }else{
             wait(NULL);
@@ -107,17 +118,31 @@ void execCommand(char** args, int background){
         push(&currProc, command, p);
 
         if(p == -1){
+            red();
             printf("[!!] An error occurred while executing the command\n");
+            reset();
             return;
         }
         if(p == 0){
             setpgid(0, 0);
             printf("\n");
             execvp(args[0], args);
-            printf("[!!] An error occurred while executing %s\n", command);
+            red();
+            printf("[!!] An error occurred while executing ");
+            yellow();
+            printf("%s\n", command);
+            reset();
             _exit(0);
         }else{
-            printf("Process \'%s\' started with pid : [%d]\n", args[0], p);
+            purple();
+            printf("\nProcess ");
+            yellow();
+            printf("%s", args[0]);
+            purple();
+            printf(" started with pid : ");
+            yellow();
+            printf("[%d]\n", p);
+            reset();
             return;    
         }
     }
@@ -158,17 +183,24 @@ void execRedirectionAndPipe(char* command){
                 fclose(f);
                 int file = open(arr_[counter - 1], O_WRONLY | O_CREAT, 0777); //Openning the file
                 if(file == -1){
-                    printf("\n[!!]An error occured in openning file %s\n", arr_[counter - 1]);
+                    red();
+                    printf("\n[!!]An error occured in openning file ");
+                    yellow();
+                    printf("%s\n", arr_[counter - 1]);
+                    reset();
                     close(file);
                     exit(0);
                     return;
                 }else{
                     dup2(file, STDOUT_FILENO); //Changing the standard output
                     close(file);
-                    
                     printf("\n");
                     execvp(args[0], args);
-                    printf("[!!]An error occurred file execution\n");
+                    red();
+                    printf("[!!] An error occurred while executing ");
+                    yellow();
+                    printf("%s\n", command);
+                    reset();
                     _exit(0);
                 }
             }else{
@@ -197,7 +229,11 @@ void execRedirectionAndPipe(char* command){
             if(p == 0){
                 int file = open(arr_[counter - 1], O_RDONLY); //Opening the file
                 if(file == -1){
-                    printf("\n[!!]An error occured in openning file %s\n", arr_[counter - 1]);
+                    red();
+                    printf("\n[!!]An error occured in openning file ");
+                    yellow();
+                    printf("%s\n", arr_[counter - 1]);
+                    reset();
                     close(file);
                     exit(0);
                     return;
@@ -207,8 +243,12 @@ void execRedirectionAndPipe(char* command){
                     
                     printf("\n");
                     execvp(args[0], args);
-                    printf("[!!]An error occurred file execution\n");
-                    _exit(0);   
+                    red();
+                    printf("[!!] An error occurred while executing ");
+                    yellow();
+                    printf("%s\n", command);
+                    reset();
+                    _exit(0);  
                 }
             }else{
                 wait(NULL);
@@ -250,14 +290,22 @@ void execRedirectionAndPipe(char* command){
                 int file2 = open(arr_[counter1 - 1], O_WRONLY | O_CREAT, 0777);
                 
                 if(file1 == -1){
-                    printf("\n[!!]An error occured in openning file %s\n", arr__[counter2 - 1]);
+                    red();
+                    printf("\n[!!]An error occured in openning file ");
+                    yellow();
+                    printf("%s\n", arr__[counter2 - 1]);
+                    reset();
                     close(file1);
                     _exit(0);
                     return;
                 }
 
                 if(file2 == -1){
-                    printf("\n[!!]An error occured in openning file %s\n", arr_[counter1 - 1]);
+                    red();
+                    printf("\n[!!]An error occured in openning file ");
+                    yellow();
+                    printf("%s\n", arr_[counter1 - 1]);
+                    reset();
                     close(file2);
                     _exit(0);
                     return;
@@ -272,7 +320,11 @@ void execRedirectionAndPipe(char* command){
 
                 printf("\n");
                 execvp(args[0], args);
-                printf("[!!]An error occurred file execution\n");
+                red();
+                printf("[!!] An error occurred while executing ");
+                yellow();
+                printf("%s\n", command);
+                reset();
                 _exit(0);
 
             }else{
@@ -322,6 +374,17 @@ void execRedirectionAndPipe(char* command){
                         int file = open(arr1[counter - 1], O_RDONLY);
                         char** args = tokenize(arr1[0]);
 
+                        if(file == -1){
+                            red();
+                            printf("\n[!!]An error occured in openning file ");
+                            yellow();
+                            printf("%s\n", arr1[counter - 1]);
+                            reset();
+                            close(file);
+                            _exit(0);
+                            return;
+                        }
+
                         dup2(file,  STDIN_FILENO);
                         dup2(fd[i+1][1], STDOUT_FILENO);
 
@@ -335,7 +398,11 @@ void execRedirectionAndPipe(char* command){
 
                         printf("\n");
                         execvp(args[0], args);
-                        printf("[!!]An error occurred file execution\n");
+                        red();
+                        printf("[!!] An error occurred while executing ");
+                        yellow();
+                        printf("%s\n", command);
+                        reset();
                         _exit(0);
                     }else{
                         //Changing standard I/O
@@ -347,9 +414,13 @@ void execRedirectionAndPipe(char* command){
                         
                         printf("\n");
                         execvp(args[0], args);
-                        printf("[!!]An error occurred file execution\n");
+                        red();
+                        printf("[!!] An error occurred while executing ");
+                        yellow();
+                        printf("%s\n", command);
+                        reset();
                         _exit(0);
-                    }
+                            }
                 }
                 //The last command in the pipe
                 else if(arr[i + 1] == NULL){
@@ -363,6 +434,18 @@ void execRedirectionAndPipe(char* command){
                         FILE* f = fopen(arr1[counter - 1], "w");
                         fclose(f);
                         int file = open(trim(arr1[counter - 1]), O_WRONLY | O_CREAT, 0777);
+
+                        if(file == -1){
+                            red();
+                            printf("\n[!!]An error occured in openning file ");
+                            yellow();
+                            printf("%s\n", arr1[counter - 1]);
+                            reset();
+                            close(file);
+                            _exit(0);
+                            return;                  
+                        }
+
                         char** args = tokenize(arr1[0]); 
                         //Changing standard I/O
                         dup2(file, STDOUT_FILENO);
@@ -378,7 +461,12 @@ void execRedirectionAndPipe(char* command){
 
                         printf("\n");
                         execvp(args[0], args);
-                        printf("[!!]An error occurred file execution\n");
+                        
+                        red();
+                        printf("[!!] An error occurred while executing ");
+                        yellow();
+                        printf("%s\n", command);
+                        reset();
                         _exit(0);
                     }else{
                         //Changing standard I/O
@@ -389,7 +477,11 @@ void execRedirectionAndPipe(char* command){
                         
                         printf("\n");
                         execvp(args[0], args);
-                        printf("[!!]An error occurred file execution\n");
+                        red();
+                        printf("[!!] An error occurred while executing ");
+                        yellow();
+                        printf("%s\n", command);
+                        reset();
                         _exit(0); 
                     }
                 }
@@ -403,7 +495,11 @@ void execRedirectionAndPipe(char* command){
                     close(fd[i + 1][0]);
                     
                     execvp(args[0], args);
-                    printf("[!!]An error occurred file execution\n");
+                    red();
+                    printf("[!!] An error occurred while executing ");
+                    yellow();
+                    printf("%s\n", command);
+                    reset();;
                     _exit(0);
                 }
             }else{
@@ -427,7 +523,15 @@ void killBackgroundProcesses(struct Node** head){
     }
     printf("\n");
     while (temp != NULL){
-        printf("\nKilling process \'%s\' having pid: [%d]\n", temp->commandName, temp->processId);
+        red();
+        printf("\nKilling process ");
+        yellow();
+        printf("%s", temp->commandName);
+        red();
+        printf("having pid: ");
+        yellow();
+        printf("[%d]\n", temp->processId);
+        reset();
         kill(temp->processId, SIGKILL);
         deleteNode(&head, temp->processId);
         temp = temp->next;

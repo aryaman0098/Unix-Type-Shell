@@ -85,7 +85,7 @@ void printHistory(struct Node* head, int n){
                 len++;
                 x = x / 10;
             }
-            printf("%4d. %s\n", head->indexNum, head->commandName);
+            printf("\033[0;35m%4d. \033[1;33m%s\n", head->indexNum, head->commandName);
             head = head->next;
         }
     }
@@ -100,14 +100,16 @@ void printHistory(struct Node* head, int n){
 
         while(head != NULL && n > 0){
             n--;
-            printf("%4d. %s\n", head->indexNum, head->commandName);
+            printf("\033[0;35m%4d%4d. \033[1;33m%s\n", head->indexNum, head->commandName);
             head = head->next;
         }
     }
+    reset();
 }
 
 //Linked List fucntion to print the process ids of all the processes spawned from the shell
 void printPidAll(struct Node* head){
+    printf("\n");
     char* c;
     while(head != NULL){
         c = (char*)malloc(sizeof(char) * strlen(head->commandName));
@@ -115,7 +117,14 @@ void printPidAll(struct Node* head){
         for(int i = 0; head->commandName[i] != ' '; i++){
             strncat(c, &head->commandName[i], 1);
         }
-        printf("\nProcess name: %-30s process id: [%-5d]\n", c, head->processId);
+        purple();
+        printf("Process name: ");
+        yellow();
+        printf("%-30s", c); 
+        purple();
+        printf("id: ");
+        yellow();
+        printf("[%-5d]\n", head->processId);
         head = head->next;
         c = NULL;
     }

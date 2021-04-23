@@ -175,4 +175,29 @@ void printHelp(){
     return;
 }
 
+void red (){
+  printf("\033[1;31m");
+}
+
+void yellow(){
+    printf("\033[1;33m");
+}
+
+void cyan(){
+    printf("\033[0;36m");
+}
+
+void purple(){
+    printf("\033[0;35m");
+}
+
+
+void bold(){
+    printf("\033[1m");
+}
+
+void reset (){
+  printf("\033[0m");
+}
+
 
