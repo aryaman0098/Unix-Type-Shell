@@ -1,5 +1,5 @@
 //Loading all the necessary header files
-#include<stdlib.h>
+#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include "dirProc.h"
