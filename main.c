@@ -56,10 +56,9 @@ int main(){
         
         //Removing leading and trailing spaces
         command = trim(command);
-        
+
         //Creating copy of the command
-        char command_[strlen(command)];
-        strcpy(command_, command);
+        char* command_ = strndup(command, strlen(command));
 
         //Checking for redirection and calling the necessary function
         if(check(addChars(command_, '\|'), "|") == 1 || check(addChars(command_, '\>'), ">") == 1 || check(addChars(command_, '\<'), "<") == 1){
@@ -109,7 +108,7 @@ int main(){
         //Command to print the pid of the current shell
         else if(strcmp(command, "pid") == 0){
             purple();
-            printf("\nProcess name : ");
+            printf("\n  Process name : ");
             yellow();
             printf("%-30s", "./shell");
             purple();
@@ -156,6 +155,7 @@ int main(){
         }
         //Execution of normal command (background and foreground)
         else{
+            
             int flag = 0;
             for(int i = 0; i < strlen(command); i++){
                 if(isalpha(command[i]) || isdigit(command[i])){
@@ -177,6 +177,7 @@ int main(){
                 }
             }
         }
+        command = NULL;
         printf("\n");
     }
 }

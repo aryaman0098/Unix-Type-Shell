@@ -67,7 +67,9 @@ void printHistory(struct Node* head, int n){
     printf("\n");
 
     if(head == NULL){
+        purple();
         printf("No command to show\n\n");
+        reset();
         return;
     }
     
@@ -118,7 +120,7 @@ void printPidAll(struct Node* head){
             strncat(c, &head->commandName[i], 1);
         }
         purple();
-        printf("Process name: ");
+        printf("    Process name: ");
         yellow();
         printf("%-30s", c); 
         purple();
