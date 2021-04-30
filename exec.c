@@ -314,10 +314,9 @@ void execRedirectionAndPipe(char* command){
                 //Changing the standard input output
                 dup2(file1, STDIN_FILENO);
                 close(file1);
-
                 dup2(file2, STDOUT_FILENO);
                 close(file2);
-
+                
                 printf("\n");
                 execvp(args[0], args);
                 red();
