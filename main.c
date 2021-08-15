@@ -46,7 +46,7 @@ int main(){
         //Getting the input command
         if(getline(&command, &len, stdin) == -1){
             printf("\n");
-            return;
+            return 0;
         }
         
         //Removing trailing '\n'
